@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <label>Show</label>
+            <label>
+                <select class="recordsPerPage">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </label>
+            <span>entries</span>
+        </div>
+        <table>
+            <thead>
+                <tr class="bb">
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start Date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <thead>
+                <tr class="bt">
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start Date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="footer">
+            <p>Showing <span class="begin"></span> to <span class="end"></span> of <span class="data-length"></span>
+                entries</p>
+            <div class="pagination"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

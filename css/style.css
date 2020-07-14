@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    color: black;
+    text-align: center;
+    line-height: 30px;
+}
+
+.container {
+    width: 75%;
+    margin: 30px auto;
+    text-align: left;
+}
+
+.recordsPerPage {
+    width: 45px;
+    height: 25px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.recordsPerPage option {
+    height: 25px;
+}
+
+.recordsPerPage option:hover {
+    height: 25px;
+    border: 1.5px solid black;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr:nth-child(odd) {
+    background-color: #F6F6F6;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+th {
+    padding: 10px;
+}
+
+td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(odd) td:first-child {
+    background-color: #f1f1f1;
+}
+
+tr:nth-child(even) td:first-child {
+    background-color: #fafafa;
+}
+
+.bb th {
+    border-bottom: 1px solid black;
+    background-color: white;
+}
+
+.bt th {
+    border-top: 1px solid black ;
+    background-color: white;
+}
+
+p {
+    float: left;
+    padding: 10px 0;
+}
+.pagination {
+    float: right;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    padding: 5px 10px;
+    display: block;
+    cursor: pointer;
+    float: left;
+}
+
+a:hover {
+    color: white;
+    background-color: rgb(36, 36, 36);
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.active {
+    background-color: #E6E6E6;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #666;
+    border: none;
+}
