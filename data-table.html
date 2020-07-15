@@ -9,51 +9,56 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <label>Show</label>
-            <label>
-                <select class="recordsPerPage">
+<div class="container">
+    <div class="header">
+        <div class="recordsPerPage">
+            <label>Show
+                <select>
                     <option value="5">5</option>
                     <option value="10">10</option>
-                </select>
+                </select> entries
             </label>
-            <span>entries</span>
         </div>
-        <table>
-            <thead>
-                <tr class="bb">
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start Date</th>
-                    <th>Salary</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-            <thead>
-                <tr class="bt">
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start Date</th>
-                    <th>Salary</th>
-                </tr>
-            </thead>
-        </table>
-        <div class="footer">
-            <p>Showing <span class="begin"></span> to <span class="end"></span> of <span class="data-length"></span>
-                entries</p>
-            <div class="pagination"></div>
+        <div class="search">
+            <label>Search
+                <input type="text" value="">
+            </label>
         </div>
     </div>
+    <table>
+        <thead>
+        <tr class="bb">
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start Date</th>
+            <th>Salary</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <thead>
+        <tr class="bt">
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start Date</th>
+            <th>Salary</th>
+        </tr>
+        </thead>
+    </table>
+    <div class="footer">
+        <p>Showing <span class="begin"></span> to <span class="end"></span> of <span class="data-length"></span>
+            entries</p>
+        <div class="pagination"></div>
+    </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
 </body>
 
 </html>
