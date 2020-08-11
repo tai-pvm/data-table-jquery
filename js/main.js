@@ -54,10 +54,9 @@ $(function () {
         },
 
         renderPageControllers: function (data) {
-            let html = "";
             this.totalsPage = Math.ceil(data.length / this.pageSize);
-            html += `<a data-number="1" title="First page">First</a>
-                   <a data-number="prev" title="Previous page">Prev</a>`;
+            let html = `<a data-number="1" title="First page">First</a>
+                        <a data-number="prev" title="Previous page">Prev</a>`;
             let addPage = (start, end) => {
                 for (let i = start; i <= end; i++) {
                     html += `<a data-number="${i}" class="page-index ${this.currentPage === i ? "active" : ""}">${i}</a>`;
@@ -109,10 +108,10 @@ $(function () {
         },
 
         validatePageControllers: function () {
-            let firstPage = $('[title="First page"]'),
-                prevPage = $('[data-number="prev"]'),
-                nextPage = $('[data-number="next"]'),
-                lastPage = $('[title="Last page"]');
+            let firstPage = $("[title='First page']"),
+                prevPage = $("[data-number='prev']"),
+                nextPage = $("[data-number='next']"),
+                lastPage = $("[title='Last page']");
             firstPage.show(); prevPage.show(); nextPage.show(); lastPage.show();
             if (this.currentPage <= 1) {
                 prevPage.hide();
@@ -149,19 +148,22 @@ $(function () {
             });
         },
 
+        compareValues: function (key, order = "asc") {
+            return function innerSort(a, b) {
+                // Kiểm tra xem key của mỗi object có tồn tại không.
+                if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+                    return 0;
+                }
+                const varA = (typeof a[key] === "string") ? a[key].toUpperCase() : a[key];
+                const varB = (typeof b[key] === "string") ? b[key].toUpperCase() : b[key];
+                let comparison = 0;
+                if (varA > varB) { comparison = 1; }
+                if (varA < varB) { comparison = -1; }
+                return ((order === "desc") ? (comparison * -1) : comparison);
+            };
+        },
+
         eventSortingRecords: function (data) {
-            function compareValues(key, order = "asc") {
-                return function innerSort(a, b) {
-                    // Kiểm tra xem key của mỗi object có tồn tại không.
-                    if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) { return 0; }
-                    const varA = (typeof a[key] === "string") ? a[key].toUpperCase() : a[key];
-                    const varB = (typeof b[key] === "string") ? b[key].toUpperCase() : b[key];
-                    let comparison = 0;
-                    if (varA > varB) { comparison = 1; }
-                    if (varA < varB) { comparison = -1; }
-                    return ((order === "desc") ? (comparison * -1) : comparison);
-                };
-            }
             let self = this, ascArrow = $(".ascending"), descArrow = $(".descending");
             ascArrow.hide(); descArrow.hide();
             $('tr:first-child th:first-child .ascending').show();
@@ -183,7 +185,7 @@ $(function () {
                     $(this).children(".descending").show();
                     $(this).data("sort", "asc");
                 }
-                self.renderRecords(self.currentPage, data.sort(compareValues(key, order)));
+                self.renderRecords(self.currentPage, data.sort(self.compareValues(key, order)));
                 $(`tr:nth-child(odd) td:nth-child(${n})`).css("background-color", "#f1f1f1");
                 $(`tr:nth-child(even) td:nth-child(${n})`).css("background-color", "#fafafa");
             });
