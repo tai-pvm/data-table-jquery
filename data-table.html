@@ -9,56 +9,59 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="header">
+
+    <header class="container flex">
         <div class="recordsPerPage">
             <label>Show
                 <select>
                     <option value="5">5</option>
                     <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
                 </select> entries
             </label>
         </div>
         <div class="search">
-            <label>Search
-                <input type="text" value="">
-            </label>
+            <label for="search">Search</label>
+            <input type="text" id="search" value="">
         </div>
-    </div>
-    <table>
-        <thead>
-        <tr class="bb">
-            <th>Name</th>
-            <th>Position</th>
-            <th>Office</th>
-            <th>Age</th>
-            <th>Start Date</th>
-            <th>Salary</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <thead>
-        <tr class="bt">
-            <th>Name</th>
-            <th>Position</th>
-            <th>Office</th>
-            <th>Age</th>
-            <th>Start Date</th>
-            <th>Salary</th>
-        </tr>
-        </thead>
-    </table>
-    <div class="footer">
-        <p>Showing <span class="begin"></span> to <span class="end"></span> of <span class="data-length"></span>
-            entries</p>
-        <div class="pagination"></div>
-    </div>
-</div>
+    </header>
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="js/data.js"></script>
-<script src="js/main.js"></script>
+    <main class="container">
+        <table>
+            <thead>
+            <tr class="bb">
+                <th data-key="name" data-sort="desc">Name<span class="ascending"></span><span class="descending"></span></th>
+                <th data-key="position" data-sort="desc">Position<span class="ascending"></span><span class="descending"></span></th>
+                <th data-key="office" data-sort="desc">Office<span class="ascending"></span><span class="descending"></span></th>
+                <th data-key="age" data-sort="desc">Age<span class="ascending"></span><span class="descending"></span></th>
+                <th data-key="startDate" data-sort="desc">Start date<span class="ascending"></span><span class="descending"></span></th>
+                <th data-key="salary" data-sort="desc">Salary<span class="ascending"></span><span class="descending"></span></th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <thead>
+            <tr class="bt">
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start Date</th>
+                <th>Salary</th>
+            </tr>
+            </thead>
+        </table>
+    </main>
+
+    <footer class="container flex">
+        <p>Showing <span class="prefix"></span> to <span class="suffix"></span> of <span class="total"></span> entries</p>
+        <div class="pagination flex"></div>
+    </footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript" src="js/data.js"></script>
+<script type="text/javascript" src="js/dataTable.js"></script>
 </body>
 
 </html>

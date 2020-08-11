@@ -1,149 +1,155 @@
 $(function () {
     let dataTable = {
+        dataSource: employees,
         tableSelector: $('tbody'),
         pageController: $('.pagination'),
-        dataSource: employees,
-        totalRecords: employees.length,
         recordPerPageSelector: $('.recordsPerPage select'),
         searchSelector: $('.search input'),
         pageSize: parseInt(sessionStorage.getItem("pageSize")) || 10,
         currentPage: 1,
         recordBegin: 0,
         recordEnd: 10,
+        pageStep: 2,
         totalsPage: 0,
 
         init: function () {
-            this.initData();
-            this.initEvent();
-            this.bindEventSearchingRecord();
-            this.bindEventSortingRecords();
+            this.initData(this.dataSource);
+            this.initEvent(this.dataSource);
         },
 
-        initEvent: function () {
-            this.bindEventChangeRecordPerPage();
-            this.bindEventChangingPage();
+        initData: function (data) {
+            this.renderRecords(this.currentPage, data);
+            this.renderPageControllers(data);
         },
 
-        initData: function () {
-            this.renderRecords(this.currentPage);
-            this.renderPageControllers();
+        initEvent: function (data) {
+            this.eventChangeRecordPerPage(data);
+            this.eventSearchingRecord(data);
+            this.eventSortingRecords(data);
         },
 
-        setCurrentPage: function (currentPage) {
-            this.currentPage = currentPage;
-        },
-
-        setRecordBegin: function (recordBegin) {
-            this.recordBegin = recordBegin;
-        },
-
-        setRecordEnd: function (recordEnd) {
-            this.recordEnd = recordEnd;
-        },
-
-        setPageSize: function (pageSize) {
-            this.pageSize = pageSize;
-        },
-
-        renderRecords: function (page) {
-            this.setRecordBegin((page - 1) * this.pageSize);
-            this.setRecordEnd(page * this.pageSize);
+        renderRecords: function (page, data) {
+            this.recordBegin = (page - 1) * this.pageSize;
+            this.recordEnd = page * this.pageSize;
             this.recordPerPageSelector.val(this.pageSize);
-            let currentRecords = this.dataSource.slice(this.recordBegin, this.recordEnd);
-            this.tableSelector.empty();
+            let currentRecords = data.slice(this.recordBegin, this.recordEnd), html = "";
             currentRecords.map((record) => {
-                return this.tableSelector.append(`<tr>
-                                           <td>${record.name}</td>
-                                           <td>${record.position}</td>
-                                           <td>${record.office}</td>
-                                           <td>${record.age}</td>
-                                           <td>${record.startDate}</td>
-                                           <td>${record.salary.toLocaleString('en-US', {style: 'currency', currency: 'USD'})}</td>
-                                           </tr>`);
+                html += `<tr>
+                            <td>${record.name}</td>
+                            <td>${record.position}</td>
+                            <td>${record.office}</td>
+                            <td>${record.age}</td>
+                            <td>${record.startDate}</td>
+                            <td>${record.salary.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                        </tr>`;
             });
-            let prefix = $('.prefix'), suffix = $('.suffix');
-            prefix.empty().append(String(this.recordBegin + 1));
-            this.currentPage === this.totalsPage ? suffix.empty().append(String(this.totalRecords)) : suffix.empty().append(String(this.recordEnd));
-            if (this.totalRecords === 0) { prefix.empty().append(String(0)); suffix.empty().append(String(0)); }
-            $('.total').empty().append(String(this.totalRecords));
-        },
-
-        renderPageControllers: function () {
-            let html = "";
-            this.pageController.empty();
-            this.totalsPage = Math.ceil(this.totalRecords / this.pageSize);
-            html+=`<a data-number="1" title="First page">First</a>
-                   <a data-number="prev" title="Previous page">Prev</a>`;
-            for (let i = 1; i <= this.totalsPage; i++) {
-                html += `<a data-number="${i}" class="page-index">${i}</a>`;
+            this.tableSelector.empty().append(html);
+            $('.prefix').empty().append(`${this.recordBegin + 1}`);
+            $('.suffix').empty().append(this.recordEnd >= data.length ? data.length : this.recordEnd);
+            if (data.length === 0) {
+                $('.prefix').empty().append("0");
+                $('.suffix').empty().append("0");
             }
-            html+=`<a data-number="next" title="Next page">Next</a>
-                   <a data-number=${this.totalsPage} title="Last page">Last</a>`;
-            this.pageController.append(html);
+            $('.total').empty().append(data.length);
         },
 
-        bindEventChangingPage: function() {
+        renderPageControllers: function (data) {
+            let html = "";
+            this.totalsPage = Math.ceil(data.length / this.pageSize);
+            html += `<a data-number="1" title="First page">First</a>
+                   <a data-number="prev" title="Previous page">Prev</a>`;
+            let addPage = (start, end) => {
+                for (let i = start; i <= end; i++) {
+                    html += `<a data-number="${i}" class="page-index ${this.currentPage === i ? "active" : ""}">${i}</a>`;
+                }
+            }
+            let firstPage = () => {
+                html += `<a data-number="1" class="page-index">1</a><i style="float: left; ">...</i>`;
+            }
+            let lastPage = () => {
+                html += `<i style="float: left">...</i><a data-number="${this.totalsPage}" class="page-index">${this.totalsPage}</a>`;
+            }
+            let pageStart = () => {
+                if (this.totalsPage < this.pageStep * 2 + 6) {
+                    addPage(1, this.totalsPage);
+                } else if (this.currentPage < this.pageStep * 2 + 1) {
+                    addPage(1, this.pageStep * 2 + 3)
+                    lastPage();
+                } else if (this.currentPage > this.totalsPage - this.pageStep * 2) {
+                    firstPage();
+                    addPage(this.totalsPage - this.pageStep * 2 - 2, this.totalsPage);
+                } else {
+                    firstPage();
+                    addPage(this.currentPage - this.pageStep, this.currentPage + this.pageStep);
+                    lastPage();
+                }
+            }
+            pageStart();
+            html += `<a data-number="next" title="Next page">Next</a>
+                   <a data-number=${this.totalsPage} title="Last page">Last</a>`;
+            this.pageController.empty().append(html);
+            this.eventChangingPage(data);
+        },
+
+        eventChangingPage: function (data) {
             let self = this;
             this.validatePageControllers();
-            this.pageController.children().click(function () {
+            this.pageController.children("a").click(function () {
                 let value = $(this).data("number");
                 if ("prev" === value) {
                     value = self.currentPage < 1 ? 1 : self.currentPage - 1;
                 } else if ("next" === value) {
                     value = self.currentPage > self.totalsPage ? self.totalsPage : self.currentPage + 1;
                 }
-                self.setCurrentPage(value);
+                self.currentPage = value;
+                self.renderRecords(self.currentPage, data);
+                self.renderPageControllers(data);
                 self.validatePageControllers();
-                self.renderRecords(self.currentPage);
             });
         },
 
-        validatePageControllers: function() {
+        validatePageControllers: function () {
             let firstPage = $('[title="First page"]'),
                 prevPage = $('[data-number="prev"]'),
                 nextPage = $('[data-number="next"]'),
-                lastPage = $('[title="Last page"]'),
-                pagesIndex = $('.page-index');
+                lastPage = $('[title="Last page"]');
             firstPage.show(); prevPage.show(); nextPage.show(); lastPage.show();
-            if (this.currentPage <= 1){
-                prevPage.hide(); firstPage.hide();
+            if (this.currentPage <= 1) {
+                prevPage.hide();
+                firstPage.hide();
             }
             if (this.currentPage >= this.totalsPage) {
-                nextPage.hide(); lastPage.hide();
+                nextPage.hide();
+                lastPage.hide();
             }
-            pagesIndex.removeClass("active").eq(this.currentPage - 1).addClass("active");
         },
 
-        bindEventChangeRecordPerPage: function() {
-            let self = this;
-            this.recordPerPageSelector.on("change", function () {
+        eventChangeRecordPerPage: function (data) {
+            this.recordPerPageSelector.on("change", () => {
                 sessionStorage.setItem("pageSize", $(".recordsPerPage option:selected").val());
-                self.setCurrentPage(1);
-                self.setPageSize(parseInt(sessionStorage.getItem("pageSize")));
-                self.renderRecords(self.currentPage);
-                self.renderPageControllers();
-                self.bindEventChangingPage();
+                this.currentPage = 1;
+                this.pageSize = parseInt(sessionStorage.getItem("pageSize"));
+                this.renderRecords(this.currentPage, data);
+                this.renderPageControllers(data);
+                this.eventChangingPage(data);
             });
         },
 
-        bindEventSearchingRecord: function() {
-            let self = this;
-            this.searchSelector.keyup(function() {
-                let searchValue = self.searchSelector.val();
-                searchValue = searchValue.toLowerCase().replace(/ /g,"").trim();
-                let employeesTemp = employees.reduce((employeesTemp, employee) => {
-                    return (employee.name.toLowerCase().replace(/ /g,"").trim().search(searchValue) > -1)
-                        ? [...employeesTemp, employee] : employeesTemp;
+        eventSearchingRecord: function (data) {
+            this.searchSelector.keyup(() => {
+                let searchValue = this.searchSelector.val();
+                searchValue = searchValue.toLowerCase().replace(/ /g, "").trim();
+                let dataTemp = data.reduce((dataTemp, record) => {
+                    return (record.name.toLowerCase().replace(/ /g, "").trim().search(searchValue) > -1)
+                        ? [...dataTemp, record] : dataTemp;
                 }, []);
-                self.dataSource = employeesTemp;
-                self.totalRecords = employeesTemp.length;
-                self.setCurrentPage(1);
-                self.initData();
-                self.bindEventChangingPage();
+                this.currentPage = 1;
+                this.initData(dataTemp);
+                this.eventChangingPage(dataTemp);
             });
         },
 
-        bindEventSortingRecords: function () {
+        eventSortingRecords: function (data) {
             function compareValues(key, order = "asc") {
                 return function innerSort(a, b) {
                     // Kiểm tra xem key của mỗi object có tồn tại không.
@@ -159,28 +165,29 @@ $(function () {
             let self = this, ascArrow = $(".ascending"), descArrow = $(".descending");
             ascArrow.hide(); descArrow.hide();
             $('tr:first-child th:first-child .ascending').show();
-            $('tr:nth-child(odd) td:first-child').css("background-color","#f1f1f1");
-            $('tr:nth-child(even) td:first-child').css("background-color","#fafafa");
+            $('tr:nth-child(odd) td:first-child').css("background-color", "#f1f1f1");
+            $('tr:nth-child(even) td:first-child').css("background-color", "#fafafa");
             $('tr:first-child th').click(function () {
                 let order = $(this).data("sort"),
                     key = $(this).data("key"),
                     n = $(this).index() + 1;
-                if("asc" === order) {
-                    ascArrow.hide(); descArrow.hide();
+                if ("asc" === order) {
+                    ascArrow.hide();
+                    descArrow.hide();
                     $(this).children(".ascending").show();
                     $(this).data("sort", "desc");
                 }
-                if("desc" === order) {
-                    ascArrow.hide(); descArrow.hide();
+                if ("desc" === order) {
+                    ascArrow.hide();
+                    descArrow.hide();
                     $(this).children(".descending").show();
                     $(this).data("sort", "asc");
                 }
-                self.dataSource.sort(compareValues(key, order));
-                self.renderRecords(self.currentPage);
-                $(`tr:nth-child(odd) td:nth-child(${n})`).css("background-color","#f1f1f1");
-                $(`tr:nth-child(even) td:nth-child(${n})`).css("background-color","#fafafa");
+                self.renderRecords(self.currentPage, data.sort(compareValues(key, order)));
+                $(`tr:nth-child(odd) td:nth-child(${n})`).css("background-color", "#f1f1f1");
+                $(`tr:nth-child(even) td:nth-child(${n})`).css("background-color", "#fafafa");
             });
         },
     }
     dataTable.init();
-})
+});
